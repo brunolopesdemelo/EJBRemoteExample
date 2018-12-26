@@ -16,16 +16,25 @@ public class TesteDeAcesso {
 		jndiProperties.put(Context.PROVIDER_URL, "http-remoting://localhost:8080");
 		final Context context = new InitialContext(jndiProperties);
 
-		return (LancadorDeDado) context
-				.lookup("ejb:/dadoWeb/LancadorDadosBean!sessionbeans.LancadorDeDado");
-		
+		return (LancadorDeDado) context.lookup("ejb:/dadoWeb/LancadorDeDadoBean!sessionbeans.LancadorDeDado");
+
 	}
 
 	public static void main(String[] args) {
 		TesteDeAcesso ta = new TesteDeAcesso();
 		try {
 			LancadorDeDado lancadorDados = ta.lookupCalculatorEJB();
-			System.out.println(lancadorDados.lanca());
+
+			Thread thread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					for (int i = 0; i < 100; i++) {
+						System.out.println(lancadorDados.lanca());
+					}
+				}
+			});
+			thread.start();
 
 		} catch (NamingException e) {
 			// TODO Auto-generated catch block
